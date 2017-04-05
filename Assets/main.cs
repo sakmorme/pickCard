@@ -10,46 +10,68 @@ public class main : MonoBehaviour
     Vector2 gameSize;
     Camera cam;
     GameObject firstCard;
-
+    float monsterSpeed;
+    bool isSpeedBarOn;
+    int buffs;
+    int level;
     float emenyHP;
     float playerHP;
+    float startTime;
 
     void Start()
     {
+        level = 1;
         emenyHP = 300;
         playerHP = 300;
+        monsterSpeed = 5f;
+
+        subBuff();
 
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         gameSize.x = 6;
         gameSize.y = 3;
         cards = GameObject.FindGameObjectsWithTag("card"); //將所有tag是cards的物件都記到cards
         isCardCanTouch = false;
-        randomCrads();  //洗牌
+
         hpUpdate_UI();
-        closeCardAfterTime(2.5f);
+        openGameAfterTime(2.0f);
     }
 
     void Update()
     {
         mouseClickCard();
         contorl();
+        speedBar();
+    }
+    void speedBar()
+    {
+        if (isSpeedBarOn)
+        {
+            float percent = 100 * (Time.time - startTime) / monsterSpeed;
+            GameObject.Find("speedBar").GetComponent<RectTransform>().sizeDelta = new Vector2(percent, 50);
+
+            if (percent >= 100)
+            {
+                startTime = Time.time;
+                attackPlayer();
+            }
+        }
     }
     void hpUpdate_UI()
     {
         GameObject.Find("playerHP").GetComponent<UnityEngine.UI.Text>().text = "HP:" + playerHP;
         GameObject.Find("enemyHP").GetComponent<UnityEngine.UI.Text>().text = "HP:" + emenyHP;
+        GameObject.Find("level").GetComponent<UnityEngine.UI.Text>().text = "level:" + level;
 
     }
     static void countDownTime(float n)
     {
         float catchTime = Time.time;
-
     }
 
     void shakeSprite(GameObject target)
     {
         target.GetComponent<Animator>().Play("hurt");
-
     }
 
     void contorl()
@@ -59,9 +81,16 @@ public class main : MonoBehaviour
             closeCard();
         }
     }
-    void closeCardAfterTime(float t)
+    void openGameAfterTime(float t)
     {
 
+        randomCrads();
+        setIsSpeedBarOff();
+        Invoke("closeCard", t);
+        Invoke("setIsSpeedBarOn", t);
+    }
+    void closeCardAfterTime(float t)
+    {
         Invoke("closeCard", t);
     }
     void setCardCanTouch(bool n)
@@ -87,7 +116,38 @@ public class main : MonoBehaviour
         setCardCanTouch(true);
 
     }
+    void setIsSpeedBarOn()
+    {
+        startTime = Time.time;
+        isSpeedBarOn = true;
+    }
+    void setIsSpeedBarOff()
+    {
+        isSpeedBarOn = false;
+    }
 
+    void addBuff()
+    {
+        buffs++;
+        buffDisp();
+    }
+    void subBuff()
+    {
+        buffs--;
+        buffDisp();
+    }
+    void buffDisp()
+    {
+        if (buffs > 1)
+        {
+            GameObject.Find("buff").GetComponent<Animator>().Play("buffon");
+        }
+        else
+        {
+            buffs = 1;
+            GameObject.Find("buff").GetComponent<Animator>().Play("empty");
+        }
+    }
     void mouseClickCard()
     {
         if (Input.GetMouseButtonUp(0)
@@ -116,6 +176,16 @@ public class main : MonoBehaviour
 
         }
     }
+    void checkIfAllCardOpend()
+    {
+        if (openCardsList.Count == cards.Length)
+        {
+            clearOpenCardsList();
+            randomCrads();
+            openGameAfterTime(3);
+        }
+    }
+
     void checkCard(GameObject nowCard)
     {
         if (firstCard != null)
@@ -128,10 +198,10 @@ public class main : MonoBehaviour
                 action(firstCardColor);
                 setCardCanTouch(true);
                 addKeepOpenCard(nowCard);
+                checkIfAllCardOpend();
             }
             else
             {
-                attackPlayer();
                 GameObject.Find("cross").GetComponent<Animator>().Play("cross_jumpUp");
                 closeCardAfterTime(1);
 
@@ -145,6 +215,39 @@ public class main : MonoBehaviour
 
         }
     }
+
+    void action(string n)
+    {
+        switch (n)
+        {
+            case "red (Instance)":
+                attackEnemy();
+                checkEnemyHP();
+                break;
+            case "yellow (Instance)":
+                healPlayer();
+                break;
+            case "blue (Instance)":
+                addBuff();
+                break;
+            case "white (Instance)":
+                delayEmeny();
+                break;
+        }
+
+    }
+    void checkEnemyHP()
+    {
+        if (emenyHP <= 0)
+        {
+            playerHP += 300;
+            emenyHP = 300;
+            level++;
+            hpUpdate_UI();
+
+        }
+
+    }
     void attackPlayer()
     {
         playerHP -= 100;
@@ -152,54 +255,29 @@ public class main : MonoBehaviour
         GameObject.Find("emeny").GetComponent<Animator>().Play("attack");
         hpUpdate_UI();
     }
-    void action(string n)
-    {
-        switch (n)
-        {
-            case "red (Instance)":
-                attackEnemy();
-                break;
-            case "green (Instance)":
-                healPlay();
-                break;
-            case "blue (Instance)":
-                defensePlay();
-                break;
-            case "white (Instance)":
-                getExp();
-                break;
-        }
-
-    }
     void attackEnemy()
     {
-        emenyHP -= 100;
+        emenyHP -= 100 * buffs;
         GameObject.Find("emeny").GetComponent<Animator>().Play("hurt");
         GameObject.Find("player").GetComponent<Animator>().Play("attackplayer");
-
+        subBuff();
         hpUpdate_UI();
     }
-    void defensePlay()
-    {
 
+    void healPlayer()
+    {
+        playerHP += 100 * buffs;
+        hpUpdate_UI();
+        subBuff();
     }
-    void healPlay()
+    void delayEmeny()
     {
-
-    }
-    void getExp()
-    {
-
+        startTime = Time.time;
     }
     void emenySpeedup()
     {
-
+        startTime -= 0.5f;
     }
-    void emenyAttack()
-    {
-
-    }
-
 
     void resetFirstCard()
     {
