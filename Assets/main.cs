@@ -7,7 +7,7 @@ public class main : MonoBehaviour
     bool isCardCanTouch;
     GameObject[] cards;
     List<GameObject> openCardsList = new List<GameObject>();
-    Vector2 gameSize;
+    int gameSizeX, gameSizeY;
     Camera cam;
     GameObject firstCard;
     float monsterSpeed;
@@ -29,12 +29,9 @@ public class main : MonoBehaviour
         playerHP = 300;
         monsterSpeed = 5f;
         isCardCanTouch = false;
-        gameSize.x = 6;
-        gameSize.y = 3;
+        gameSizeX = 5;
+        gameSizeY = 2;
         showAllCardsTime = 2.5f;
-
-        //抓取指定物件
-        cards = GameObject.FindGameObjectsWithTag("card"); //將所有tag是cards的物件都記到cards
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         subBuff();
 
@@ -143,8 +140,6 @@ public class main : MonoBehaviour
 
     void openGameAfterTime(float t)
     {
-        randomCrads();
-        setSpeedBarPause();
         Invoke("closeAllCard", t);
         Invoke("setIsSpeedBarPlay", t);
         Invoke("setCardCanTouch", t);
@@ -253,6 +248,10 @@ public class main : MonoBehaviour
     }
     void openGame()
     {
+        destroyOldCard();
+        createCardsGameObject();
+        setSpeedBarPause();
+        createCardsColor();     //創立陣列
         clearOpenCardsList();   //清空已開牌清單
         randomCrads();          //重新洗牌
         closeAllCard();         //蓋起所有牌
@@ -260,7 +259,15 @@ public class main : MonoBehaviour
         openGameAfterTime(showAllCardsTime);   //特定秒數後蓋牌並繼續遊戲
     }
 
+    void destroyOldCard()
+    {
+        GameObject[] temp = GameObject.FindGameObjectsWithTag("card");
+        foreach (var i in temp)
+        {
+            Destroy(i);
+        }
 
+    }
     void action(string n)
     {
         switch (n)
@@ -339,12 +346,46 @@ public class main : MonoBehaviour
     {
         openCardsList.Clear();
     }
+    void createCardsColor()
+    {
+        int size = gameSizeX * gameSizeY;
+        int maxNum = size / 5;    //為什麼是5？因為目前有 01234牌組類型
+        int nowColor = 4;
+        int nowNum = 0;
+        cardsColor = new int[size];
+        for (int i = 0; i < cardsColor.Length; i++)
+        {
+            cardsColor[i] = 0;
+            if (nowColor > 0)
+            {
+                cardsColor[i] = nowColor;
+                nowNum++;
+                if (nowNum >= maxNum)
+                {
+                    nowColor--;
+                    nowNum = 0;
+                }
+            }
+        }
+    }
+
+    void createCardsGameObject()
+    {
+        for (var x = 0; x < gameSizeX; x++)
+        {
+            for (var y = 0; y < gameSizeY; y++)
+            {
+                GameObject nowCard = Instantiate(GameObject.Find("Plane"));
+                nowCard.transform.position = new Vector3(5 + x * 2.0f, 0, 5 + y * 2.25f);
+                nowCard.transform.tag = "card";
+            }
+        }
+        //抓取指定物件
+        cards = GameObject.FindGameObjectsWithTag("card"); //將所有tag是cards的物件都記到cards
+    }
 
     void randomCrads()
     {
-        // 1代表紅色 2代表藍色 3代表綠色 4代表黃色 0代表白色
-        cardsColor = new int[] { 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0 };
-
         //打散順序
         for (int i = 0; i < cardsColor.Length; i++)
         {
