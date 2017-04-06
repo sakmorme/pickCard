@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
+
 
 public class main : MonoBehaviour
 {
@@ -29,8 +30,8 @@ public class main : MonoBehaviour
         playerHP = 300;
         monsterSpeed = 5f;
         isCardCanTouch = false;
-        gameSizeX = 6;
-        gameSizeY = 6;
+        gameSizeX = 5;
+        gameSizeY = 2;
         showAllCardsTime = 2.5f;
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         subBuff();
@@ -53,8 +54,8 @@ public class main : MonoBehaviour
     //滑鼠點擊牌並翻牌
     void mouseClickCard()
     {
-        if (Input.GetMouseButtonUp(0)
-        && isCardCanTouch)
+        if (Input.GetMouseButtonUp(0) &&
+            isCardCanTouch)
         {
             RaycastHit hit;
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -99,20 +100,20 @@ public class main : MonoBehaviour
             //如果兩張牌的顏色相同
             if (firstCardColor == nowCardColor)
             {
-                action(firstCardColor);     //依照牌的顏色進行攻擊、恢復、強化...
-                addKeepOpenCard(nowCard);   //將剛剛配對的牌放入持續開牌的清單
-                checkIfAllCardOpend();      //檢查看看是不是全部牌都開了，是的話換頁
+                action(firstCardColor); //依照牌的顏色進行攻擊、恢復、強化...
+                addKeepOpenCard(nowCard); //將剛剛配對的牌放入持續開牌的清單
+                checkIfAllCardOpend(); //檢查看看是不是全部牌都開了，是的話換頁
             }
             else
             //如果兩張牌的顏色不同
             {
                 GameObject.Find("cross").GetComponent<Animator>().Play("cross_jumpUp"); //跳出錯誤圖示
-                setCardNotTouch();              //不准玩家再翻下一張
-                setCardCanTouchAfterTime(1);    //一秒後准許開牌
+                setCardNotTouch(); //不准玩家再翻下一張
+                setCardCanTouchAfterTime(1); //一秒後准許開牌
                 closeAllCard_openMatchedCardAfterTime(1); //蓋掉沒有配對的牌      
             }
 
-            resetFirstCard();   //已經兩張牌了，重置選牌狀態至什都還沒選
+            resetFirstCard(); //已經兩張牌了，重置選牌狀態至什都還沒選
         }
     }
     void speedBar()
@@ -136,7 +137,6 @@ public class main : MonoBehaviour
         GameObject.Find("level").GetComponent<UnityEngine.UI.Text>().text = "level:" + level;
 
     }
-
 
     void openGameAfterTime(float t)
     {
@@ -226,7 +226,6 @@ public class main : MonoBehaviour
         }
         else
         {
-
             buffs = 1;
             GameObject.Find("buff").GetComponent<Animator>().Play("buffOff");
             GameObject.Find("buffCount").GetComponent<UnityEngine.UI.Text>().enabled = false;
@@ -234,29 +233,25 @@ public class main : MonoBehaviour
         }
     }
 
-
-
-
-
     //如果所有的牌都開起來了，重啟遊戲
     void checkIfAllCardOpend()
     {
         if (openCardsList.Count == cards.Length)
         {
+            destroyOldCard();
             openGame();
         }
     }
     void openGame()
     {
-        destroyOldCard();
         createCardsGameObject();
         setSpeedBarPause();
-        createCardsColor();     //創立陣列
-        clearOpenCardsList();   //清空已開牌清單
-        randomCrads();          //重新洗牌
-        closeAllCard();         //蓋起所有牌
+        createCardsColor(); //創立陣列
+        clearOpenCardsList(); //清空已開牌清單
+        randomCrads(); //重新洗牌
+        closeAllCard(); //蓋起所有牌
         openAllCarsAfter(0.5f); //蓋起牌後0.5秒 掀牌給玩家看
-        openGameAfterTime(showAllCardsTime);   //特定秒數後蓋牌並繼續遊戲
+        openGameAfterTime(showAllCardsTime); //特定秒數後蓋牌並繼續遊戲
     }
 
     void destroyOldCard()
@@ -266,6 +261,8 @@ public class main : MonoBehaviour
         {
             Destroy(i);
         }
+        cards = GameObject.FindGameObjectsWithTag("card");
+
 
     }
     void action(string n)
@@ -349,7 +346,8 @@ public class main : MonoBehaviour
     void createCardsColor()
     {
         int size = gameSizeX * gameSizeY;
-        int maxNum = size / 5;    //為什麼是5？因為目前有 01234牌組類型
+        int maxNum = size / 5; //為什麼是5？因為目前有 01234牌組類型
+        maxNum -= maxNum % 2 == 0 ? 0 : 1;
         int nowColor = 4;
         int nowNum = 0;
         cardsColor = new int[size];
@@ -376,10 +374,13 @@ public class main : MonoBehaviour
             for (var y = 0; y < gameSizeY; y++)
             {
                 GameObject nowCard = Instantiate(GameObject.Find("Plane"));
-                nowCard.transform.position = new Vector3(5 + x * 2.0f - 11.5f, 0, 5 + y * 2.25f - 7f);
+                nowCard.transform.parent = GameObject.Find("planes").transform;
+                nowCard.transform.position = new Vector3(x * 2.0f, 0, y * 2.25f);
                 nowCard.transform.tag = "card";
             }
         }
+        GameObject.Find("planes").transform.position -=
+            new Vector3(gameSizeX * 2.0f * 0.5f, 0, gameSizeY * 2.25f * 0.5f);
         //抓取指定物件
         cards = GameObject.FindGameObjectsWithTag("card"); //將所有tag是cards的物件都記到cards
     }
@@ -401,6 +402,7 @@ public class main : MonoBehaviour
     {
         //放置顏色 
         string color = "white";
+        Debug.Log(cardsColor.Length);
         for (int i = 0; i < cardsColor.Length; i++)
         {
             color = decodeColor(cardsColor[i]);
