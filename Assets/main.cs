@@ -13,38 +13,110 @@ public class main : MonoBehaviour
     float monsterSpeed;
     float lastTime;
     bool isSpeedBarOn;
-    int buffs;
+    float buffs;
     int level;
     float emenyHP;
     float playerHP;
     float startTime;
+    float showAllCardsTime;
 
     void Start()
     {
+        //初始化變數資料
         buffs = 1;
         level = 1;
         emenyHP = 300;
         playerHP = 300;
         monsterSpeed = 5f;
-
-        subBuff();
-
-        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        isCardCanTouch = false;
         gameSize.x = 6;
         gameSize.y = 3;
-        cards = GameObject.FindGameObjectsWithTag("card"); //將所有tag是cards的物件都記到cards
-        isCardCanTouch = false;
+        showAllCardsTime = 2.5f;
 
+        //抓取指定物件
+        cards = GameObject.FindGameObjectsWithTag("card"); //將所有tag是cards的物件都記到cards
+        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        subBuff();
+
+        //遊戲初始化
         hpUpdate_UI();
-        openGameAfterTime(2.0f);
         buffDisp();
+
+        //開啟遊戲
+        openGame();
+
     }
 
     void Update()
     {
         mouseClickCard();
-        contorl();
         speedBar();
+    }
+
+    //滑鼠點擊牌並翻牌
+    void mouseClickCard()
+    {
+        if (Input.GetMouseButtonUp(0)
+        && isCardCanTouch)
+        {
+            RaycastHit hit;
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.transform.tag == "card")
+                {
+                    openCard(hit.transform.gameObject);
+                }
+            }
+        }
+
+    }
+
+    //翻牌並檢查牌
+    void openCard(GameObject n)
+    {
+        if (n.GetComponent<Renderer>().material.name == "gray (Instance)")
+        {
+            string temp = decodeColor(cardsColor[int.Parse(n.name)]);
+            n.transform.GetComponent<Renderer>().material = (Material)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/Materials/" + temp + ".mat", typeof(Material));
+            checkCard(n);
+        }
+    }
+
+    //檢查牌並依照牌的結果執行各項操作
+    void checkCard(GameObject nowCard)
+    {
+        //如果點選第一張牌...
+        if (firstCard == null)
+        {
+            firstCard = nowCard;
+        }
+        else
+        //如果點選第二張牌...
+        {
+            //記住兩張牌的顏色
+            string nowCardColor = nowCard.GetComponent<Renderer>().material.name;
+            string firstCardColor = firstCard.GetComponent<Renderer>().material.name;
+
+            //如果兩張牌的顏色相同
+            if (firstCardColor == nowCardColor)
+            {
+                action(firstCardColor);     //依照牌的顏色進行攻擊、恢復、強化...
+                addKeepOpenCard(nowCard);   //將剛剛配對的牌放入持續開牌的清單
+                checkIfAllCardOpend();      //檢查看看是不是全部牌都開了，是的話換頁
+            }
+            else
+            //如果兩張牌的顏色不同
+            {
+                GameObject.Find("cross").GetComponent<Animator>().Play("cross_jumpUp"); //跳出錯誤圖示
+                setCardNotTouch();              //不准玩家再翻下一張
+                setCardCanTouchAfterTime(1);    //一秒後准許開牌
+                closeAllCard_openMatchedCardAfterTime(1); //蓋掉沒有配對的牌      
+            }
+
+            resetFirstCard();   //已經兩張牌了，重置選牌狀態至什都還沒選
+        }
     }
     void speedBar()
     {
@@ -67,64 +139,72 @@ public class main : MonoBehaviour
         GameObject.Find("level").GetComponent<UnityEngine.UI.Text>().text = "level:" + level;
 
     }
-    static void countDownTime(float n)
-    {
-        float catchTime = Time.time;
-    }
 
-    void shakeSprite(GameObject target)
-    {
-        target.GetComponent<Animator>().Play("hurt");
-    }
 
-    void contorl()
-    {
-        if (Input.GetKey("space"))
-        {
-            closeCard();
-        }
-    }
     void openGameAfterTime(float t)
     {
-
         randomCrads();
-        setIsSpeedBarOff();
-        Invoke("closeCard", t);
-        Invoke("setIsSpeedBarOn", t);
+        setSpeedBarPause();
+        Invoke("closeAllCard", t);
+        Invoke("setIsSpeedBarPlay", t);
+        Invoke("setCardCanTouch", t);
     }
-    void closeCardAfterTime(float t)
+    void closeAllCardAfterTime(float t)
     {
-        Invoke("closeCard", t);
+        Invoke("closeAllCard", t);
     }
-    void setCardCanTouch(bool n)
+    void closeAllCard_openMatchedCardAfterTime(float t)
     {
-        isCardCanTouch = n;
+        Invoke("closeAllCard_openMatchedCard", t);
+    }
+    void setCardCanTouch()
+    {
+        isCardCanTouch = true;
+    }
+    void setCardCanTouchAfterTime(float t)
+    {
+        Invoke("setCardCanTouch", t);
+    }
+    void setCardNotTouch()
+    {
+        isCardCanTouch = false;
     }
 
-    void closeCard()
+    void closeAllCard_openMatchedCard()
     {
+        closeAllCard();
+        openMatchedCard();
+        setCardCanTouch();
+    }
 
+    //全部牌蓋起來
+    void closeAllCard()
+    {
         for (int i = 0; i < cardsColor.Length; i++)
         {
-            //全部牌蓋起來
             cards[i].GetComponent<Renderer>().material =
                 (Material)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/Materials/gray.mat", typeof(Material));
         }
-        //開啟被記錄在OpenCardsList的牌
+    }
+
+    //開啟已配對成功的牌
+    void openMatchedCard()
+    {
         foreach (var n in openCardsList)
         {
             string temp = decodeColor(cardsColor[int.Parse(n.name)]);
             n.transform.GetComponent<Renderer>().material = (Material)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/Materials/" + temp + ".mat", typeof(Material));
         }
-        setCardCanTouch(true);
-
     }
-    void setIsSpeedBarOn()
+
+    //設定怪物行動條繼續跑
+    void setIsSpeedBarPlay()
     {
         startTime = Time.time - lastTime;
         isSpeedBarOn = true;
     }
-    void setIsSpeedBarOff()
+    //設定怪物行動條暫停
+    void setSpeedBarPause()
     {
         lastTime = Time.time - startTime;
         isSpeedBarOn = false;
@@ -145,81 +225,41 @@ public class main : MonoBehaviour
         if (buffs > 1)
         {
             GameObject.Find("buff").GetComponent<Animator>().Play("buffOn");
+            GameObject.Find("buffCount").GetComponent<UnityEngine.UI.Text>().text = ("增益效果+" + (buffs - 1));
+            GameObject.Find("buffCount").GetComponent<UnityEngine.UI.Text>().enabled = true;
+            GameObject.Find("buffTip").GetComponent<UnityEngine.UI.Text>().enabled = true;
         }
         else
         {
 
             buffs = 1;
             GameObject.Find("buff").GetComponent<Animator>().Play("buffOff");
+            GameObject.Find("buffCount").GetComponent<UnityEngine.UI.Text>().enabled = false;
+            GameObject.Find("buffTip").GetComponent<UnityEngine.UI.Text>().enabled = false;
         }
     }
-    void mouseClickCard()
-    {
-        if (Input.GetMouseButtonUp(0)
-        && isCardCanTouch)
-        {
-            RaycastHit hit;
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.transform.tag == "card")
-                {
-                    openCard(hit.transform.gameObject);
-                }
-            }
-        }
 
-    }
-    void openCard(GameObject n)
-    {
-        if (n.GetComponent<Renderer>().material.name == "gray (Instance)")
-        {
-            string temp = decodeColor(cardsColor[int.Parse(n.name)]);
-            n.transform.GetComponent<Renderer>().material = (Material)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/Materials/" + temp + ".mat", typeof(Material));
-            checkCard(n);
 
-        }
-    }
+
+
+    //如果所有的牌都開起來了，重啟遊戲
     void checkIfAllCardOpend()
     {
         if (openCardsList.Count == cards.Length)
         {
-            clearOpenCardsList();
-            randomCrads();
-            openGameAfterTime(3);
+            openGame();
         }
     }
-
-    void checkCard(GameObject nowCard)
+    void openGame()
     {
-        if (firstCard != null)
-        {
-            string nowCardColor = nowCard.GetComponent<Renderer>().material.name;
-            string firstCardColor = firstCard.GetComponent<Renderer>().material.name;
-            setCardCanTouch(false);
-            if (firstCardColor == nowCardColor)
-            {
-                action(firstCardColor);
-                setCardCanTouch(true);
-                addKeepOpenCard(nowCard);
-                checkIfAllCardOpend();
-            }
-            else
-            {
-                GameObject.Find("cross").GetComponent<Animator>().Play("cross_jumpUp");
-                closeCardAfterTime(1);
-
-            }
-            resetFirstCard();
-
-        }
-        else
-        {
-            firstCard = nowCard;
-
-        }
+        clearOpenCardsList();   //清空已開牌清單
+        randomCrads();          //重新洗牌
+        closeAllCard();         //蓋起所有牌
+        openAllCarsAfter(0.5f); //蓋起牌後0.5秒 掀牌給玩家看
+        openGameAfterTime(showAllCardsTime);   //特定秒數後蓋牌並繼續遊戲
     }
+
 
     void action(string n)
     {
@@ -255,7 +295,7 @@ public class main : MonoBehaviour
     }
     void attackPlayer()
     {
-        playerHP -= 100;
+        playerHP -= (100 * (1 / buffs));
         GameObject.Find("player").GetComponent<Animator>().Play("hurtplayer");
         GameObject.Find("emeny").GetComponent<Animator>().Play("attack");
         hpUpdate_UI();
@@ -277,6 +317,7 @@ public class main : MonoBehaviour
     }
     void delayEmeny()
     {
+        GameObject.Find("emeny").GetComponent<Animator>().Play("freeze");
         startTime = Time.time;
     }
     void emenySpeedup()
@@ -313,16 +354,23 @@ public class main : MonoBehaviour
             cardsColor[i] = temp;
         }
 
+    }
+
+    void openAllCards()
+    {
         //放置顏色 
         string color = "white";
         for (int i = 0; i < cardsColor.Length; i++)
         {
-
             color = decodeColor(cardsColor[i]);
             cards[i].name = i.ToString();
             cards[i].GetComponent<Renderer>().material =
                 (Material)UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/Materials/" + color + ".mat", typeof(Material));
         }
+    }
+    void openAllCarsAfter(float t)
+    {
+        Invoke("openAllCards", t);
     }
 
     string decodeColor(int i)
