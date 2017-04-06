@@ -1,29 +1,29 @@
 fileFormatVersion: 2
-guid: 987eb317a812e8e4da4a5074b6685714
-timeCreated: 1491389617
+guid: b62ce29a6add5e844ad429226d93fe68
+timeCreated: 1491488391
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: buff_0
-    21300002: buff_1
-    21300004: buff_2
-    21300006: buff_3
-    21300008: buff_4
-    21300010: buff_5
-    21300012: buff_6
-    21300014: buff_7
-    21300016: buff_8
-    21300018: buff_9
-    21300020: buff_10
-    21300022: buff_11
-    21300024: buff_12
-    21300026: buff_13
-    21300028: buff_14
-    21300030: buff_15
-    21300032: buff_16
-    21300034: buff_17
-    21300036: buff_18
-    21300038: buff_19
+    21300000: heal_003_0
+    21300002: heal_003_1
+    21300004: heal_003_2
+    21300006: heal_003_3
+    21300008: heal_003_4
+    21300010: heal_003_5
+    21300012: heal_003_6
+    21300014: heal_003_7
+    21300016: heal_003_8
+    21300018: heal_003_9
+    21300020: heal_003_10
+    21300022: heal_003_11
+    21300024: heal_003_12
+    21300026: heal_003_13
+    21300028: heal_003_14
+    21300030: heal_003_15
+    21300032: heal_003_16
+    21300034: heal_003_17
+    21300036: heal_003_18
+    21300038: heal_003_19
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -86,14 +86,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-  - buildTarget: Android
-    maxTextureSize: 2048
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
   - buildTarget: WebGL
     maxTextureSize: 2048
     textureFormat: -1
@@ -106,260 +98,260 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: buff_0
+      name: heal_003_0
       rect:
         serializedVersion: 2
-        x: 57
-        y: 615
-        width: 78
-        height: 36
+        x: 0
+        y: 576
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_1
+      name: heal_003_1
       rect:
         serializedVersion: 2
-        x: 236
-        y: 615
-        width: 104
-        height: 52
+        x: 192
+        y: 576
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_2
+      name: heal_003_2
       rect:
         serializedVersion: 2
-        x: 419
-        y: 615
-        width: 122
-        height: 67
+        x: 384
+        y: 576
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_3
+      name: heal_003_3
       rect:
         serializedVersion: 2
-        x: 606
-        y: 615
-        width: 133
-        height: 82
+        x: 576
+        y: 576
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_4
+      name: heal_003_4
       rect:
         serializedVersion: 2
-        x: 795
-        y: 615
-        width: 138
-        height: 94
+        x: 768
+        y: 576
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_5
+      name: heal_003_5
       rect:
         serializedVersion: 2
-        x: 27
-        y: 423
-        width: 139
-        height: 105
+        x: 0
+        y: 384
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_6
+      name: heal_003_6
       rect:
         serializedVersion: 2
-        x: 219
-        y: 423
-        width: 139
-        height: 115
+        x: 192
+        y: 384
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_7
+      name: heal_003_7
       rect:
         serializedVersion: 2
-        x: 411
-        y: 423
-        width: 139
-        height: 124
+        x: 384
+        y: 384
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_8
+      name: heal_003_8
       rect:
         serializedVersion: 2
-        x: 603
-        y: 423
-        width: 139
-        height: 132
+        x: 576
+        y: 384
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_9
+      name: heal_003_9
       rect:
         serializedVersion: 2
-        x: 795
-        y: 426
-        width: 139
-        height: 135
+        x: 768
+        y: 384
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_10
+      name: heal_003_10
       rect:
         serializedVersion: 2
-        x: 27
-        y: 238
-        width: 139
-        height: 136
+        x: 0
+        y: 192
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_11
+      name: heal_003_11
       rect:
         serializedVersion: 2
-        x: 219
-        y: 242
-        width: 139
-        height: 132
+        x: 192
+        y: 192
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_12
+      name: heal_003_12
       rect:
         serializedVersion: 2
-        x: 411
-        y: 248
-        width: 139
-        height: 126
+        x: 384
+        y: 192
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_13
+      name: heal_003_13
       rect:
         serializedVersion: 2
-        x: 603
-        y: 255
-        width: 139
-        height: 119
+        x: 576
+        y: 192
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_14
+      name: heal_003_14
       rect:
         serializedVersion: 2
-        x: 795
-        y: 264
-        width: 139
-        height: 110
+        x: 768
+        y: 192
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_15
+      name: heal_003_15
       rect:
         serializedVersion: 2
-        x: 27
-        y: 83
-        width: 139
-        height: 99
+        x: 0
+        y: 0
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_16
+      name: heal_003_16
       rect:
         serializedVersion: 2
-        x: 220
-        y: 95
-        width: 136
-        height: 87
+        x: 192
+        y: 0
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_17
+      name: heal_003_17
       rect:
         serializedVersion: 2
-        x: 416
-        y: 109
-        width: 128
-        height: 73
+        x: 384
+        y: 0
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_18
+      name: heal_003_18
       rect:
         serializedVersion: 2
-        x: 615
-        y: 125
-        width: 114
-        height: 57
+        x: 576
+        y: 0
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: buff_19
+      name: heal_003_19
       rect:
         serializedVersion: 2
-        x: 819
-        y: 142
-        width: 91
-        height: 40
+        x: 768
+        y: 0
+        width: 192
+        height: 192
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

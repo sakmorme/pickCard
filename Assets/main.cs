@@ -7,16 +7,18 @@ public class main : MonoBehaviour
     int[] cardsColor;
     bool isCardCanTouch;
     GameObject[] cards;
+    GameObject gameOver;
     List<GameObject> openCardsList = new List<GameObject>();
     int gameSizeX, gameSizeY;
     Camera cam;
     GameObject firstCard;
-    float monsterSpeed;
+    public float emenySpeed;
     float lastTime;
     bool isSpeedBarOn;
     float buffs;
-    int level;
+    float level;
     float emenyHP;
+    public float emenyDamage;
     float playerHP;
     float startTime;
     float showAllCardsTime;
@@ -26,19 +28,22 @@ public class main : MonoBehaviour
         //初始化變數資料
         buffs = 1;
         level = 1;
-        emenyHP = 300;
         playerHP = 300;
-        monsterSpeed = 5f;
+        emenySpeed = 5f;
         isCardCanTouch = false;
         gameSizeX = 5;
         gameSizeY = 2;
         showAllCardsTime = 2.5f;
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        gameOver = GameObject.Find("gameOver");
+        gameOver.SetActive(false);
         subBuff();
 
         //遊戲初始化
+        difficult();
         hpUpdate_UI();
         buffDisp();
+
 
         //開啟遊戲
         openGame();
@@ -120,7 +125,7 @@ public class main : MonoBehaviour
     {
         if (isSpeedBarOn)
         {
-            float percent = 100 * (Time.time - startTime) / monsterSpeed;
+            float percent = 100 * (Time.time - startTime) / emenySpeed;
             GameObject.Find("speedBar").GetComponent<RectTransform>().sizeDelta = new Vector2(percent, 50);
 
             if (percent >= 100)
@@ -236,6 +241,8 @@ public class main : MonoBehaviour
     //如果所有的牌都開起來了，重啟遊戲
     void checkIfAllCardOpend()
     {
+        Debug.Log(cards.Length);
+        Debug.Log(openCardsList.Count);
         if (openCardsList.Count == cards.Length)
         {
             destroyOldCard();
@@ -259,9 +266,8 @@ public class main : MonoBehaviour
         GameObject[] temp = GameObject.FindGameObjectsWithTag("card");
         foreach (var i in temp)
         {
-            Destroy(i);
+            DestroyImmediate(i);
         }
-        cards = GameObject.FindGameObjectsWithTag("card");
 
 
     }
@@ -273,7 +279,7 @@ public class main : MonoBehaviour
                 attackEnemy();
                 checkEnemyHP();
                 break;
-            case "yellow (Instance)":
+            case "green (Instance)":
                 healPlayer();
                 break;
             case "blue (Instance)":
@@ -289,20 +295,124 @@ public class main : MonoBehaviour
     {
         if (emenyHP <= 0)
         {
-            playerHP += 300;
-            emenyHP = 300;
             level++;
+            difficult();
             hpUpdate_UI();
+        }
 
+    }
+    void checkPlayerHP()
+    {
+        if (playerHP <= 0)
+        {
+            setGameOver();
+        }
+    }
+    public void setRest()
+    {
+        gameOver.SetActive(false);
+        level = 1;
+        gameSizeX = 5;
+        gameSizeY = 2;
+        playerHP = 300;
+        openGameAfterTime(2.0f);
+        hpUpdate_UI();
+        buffDisp();
+    }
+    void setGameOver()
+    {
+        gameOver.SetActive(true);
+        string comments;
+        comments = "我知道你盡力了";
+        if (level >= 2)
+        {
+            comments = "認真玩一下嘛~";
+        }
+        if (level >= 3)
+        {
+            comments = "這應該是你最厲害的一次了";
+        }
+        if (level >= 4)
+        {
+            comments = "上次我家貓也玩到這等級";
+        }
+        if (level >= 5)
+        {
+            comments = "在非洲每六十秒，就有一分鐘過去";
+        }
+        if (level >= 6)
+        {
+            comments = "正常人水準唷";
+        }
+        if (level >= 7)
+        {
+            comments = "唉唷，不能小看你了";
+        }
+        if (level >= 8)
+        {
+            comments = "我..我才沒有被你的表現嚇到!";
+        }
+        if (level >= 9)
+        {
+            comments = "皮卡皮卡!";
+        }
+        if (level >= 10)
+        {
+            comments = "你一定是三個人一起玩對吧?";
+        }
+        if (level >= 11)
+        {
+            comments = "寫信告訴我 今天海是什麼顏色";
+        }
+        if (level >= 12)
+        {
+            comments = "難道你是電競選手?";
+        }
+        if (level >= 13)
+        {
+            comments = "哎呀呀...一定是有BUG";
+        }
+        if (level >= 14)
+        {
+            comments = "警察叔叔就是這個人!";
+        }
+        if (level >= 15)
+        {
+            comments = "這...這不科學阿!";
+        }
+        if (level >= 16)
+        {
+            comments = "玩到" + level + "其實沒有很難啦!";
+        }
+        GameObject.Find("Comments").GetComponent<UnityEngine.UI.Text>().text = comments;
+    }
+    void difficult()
+    {
+        emenyDamage = 100 * (4 + level) / 5;
+        emenyHP = 100 * (4 + level) / 5;
+        emenySpeed = 10 * 5 / (4 + level);
+        startTime = Time.time;
+        if (level == 3)
+        {
+            gameSizeX++;
+        }
+        if (level == 5)
+        {
+            gameSizeY++;
+        }
+        if (level == 7)
+        {
+            gameSizeX++;
         }
 
     }
     void attackPlayer()
     {
-        playerHP -= (100 * (1 / buffs));
+        playerHP -= (emenyDamage * (1 / buffs));
         GameObject.Find("player").GetComponent<Animator>().Play("hurtplayer");
         GameObject.Find("emeny").GetComponent<Animator>().Play("attack");
         hpUpdate_UI();
+        checkPlayerHP();
     }
     void attackEnemy()
     {
@@ -316,6 +426,7 @@ public class main : MonoBehaviour
     void healPlayer()
     {
         playerHP += 100 * buffs;
+        GameObject.Find("heal").GetComponent<Animator>().Play("heal");
         hpUpdate_UI();
         subBuff();
     }
@@ -380,7 +491,7 @@ public class main : MonoBehaviour
             }
         }
         GameObject.Find("planes").transform.position -=
-            new Vector3(gameSizeX * 2.0f * 0.5f, 0, gameSizeY * 2.25f * 0.5f);
+            new Vector3(gameSizeX * 2.0f * 0.5f - 1.25f, 0, gameSizeY * 2.25f * 0.5f + 1.0f);
         //抓取指定物件
         cards = GameObject.FindGameObjectsWithTag("card"); //將所有tag是cards的物件都記到cards
     }
@@ -402,7 +513,6 @@ public class main : MonoBehaviour
     {
         //放置顏色 
         string color = "white";
-        Debug.Log(cardsColor.Length);
         for (int i = 0; i < cardsColor.Length; i++)
         {
             color = decodeColor(cardsColor[i]);
@@ -432,7 +542,7 @@ public class main : MonoBehaviour
         }
         if (i == 3)
         {
-            return "yellow";
+            return "green";
         }
         if (i == 4)
         {
