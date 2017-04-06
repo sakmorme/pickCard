@@ -11,6 +11,7 @@ public class main : MonoBehaviour
     Camera cam;
     GameObject firstCard;
     float monsterSpeed;
+    float lastTime;
     bool isSpeedBarOn;
     int buffs;
     int level;
@@ -20,6 +21,7 @@ public class main : MonoBehaviour
 
     void Start()
     {
+        buffs = 1;
         level = 1;
         emenyHP = 300;
         playerHP = 300;
@@ -35,6 +37,7 @@ public class main : MonoBehaviour
 
         hpUpdate_UI();
         openGameAfterTime(2.0f);
+        buffDisp();
     }
 
     void Update()
@@ -118,11 +121,12 @@ public class main : MonoBehaviour
     }
     void setIsSpeedBarOn()
     {
-        startTime = Time.time;
+        startTime = Time.time - lastTime;
         isSpeedBarOn = true;
     }
     void setIsSpeedBarOff()
     {
+        lastTime = Time.time - startTime;
         isSpeedBarOn = false;
     }
 
@@ -140,12 +144,13 @@ public class main : MonoBehaviour
     {
         if (buffs > 1)
         {
-            GameObject.Find("buff").GetComponent<Animator>().Play("buffon");
+            GameObject.Find("buff").GetComponent<Animator>().Play("buffOn");
         }
         else
         {
+
             buffs = 1;
-            GameObject.Find("buff").GetComponent<Animator>().Play("empty");
+            GameObject.Find("buff").GetComponent<Animator>().Play("buffOff");
         }
     }
     void mouseClickCard()
