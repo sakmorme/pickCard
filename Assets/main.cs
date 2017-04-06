@@ -29,8 +29,8 @@ public class main : MonoBehaviour
         playerHP = 300;
         monsterSpeed = 5f;
         isCardCanTouch = false;
-        gameSizeX = 5;
-        gameSizeY = 2;
+        gameSizeX = 6;
+        gameSizeY = 6;
         showAllCardsTime = 2.5f;
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         subBuff();
@@ -376,7 +376,7 @@ public class main : MonoBehaviour
             for (var y = 0; y < gameSizeY; y++)
             {
                 GameObject nowCard = Instantiate(GameObject.Find("Plane"));
-                nowCard.transform.position = new Vector3(5 + x * 2.0f, 0, 5 + y * 2.25f);
+                nowCard.transform.position = new Vector3(5 + x * 2.0f - 11.5f, 0, 5 + y * 2.25f - 7f);
                 nowCard.transform.tag = "card";
             }
         }
