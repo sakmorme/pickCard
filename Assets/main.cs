@@ -362,7 +362,7 @@ public class main : MonoBehaviour
         }
         if (level >= 11)
         {
-            comments = "寫信告訴我 今天海是什麼顏色";
+            comments = "很少人玩到這裡呢";
         }
         if (level >= 12)
         {
@@ -386,23 +386,28 @@ public class main : MonoBehaviour
         }
         GameObject.Find("Comments").GetComponent<UnityEngine.UI.Text>().text = comments;
     }
+    //依照等級不同
     void difficult()
     {
         emenyDamage = 100 * (4 + level) / 5;
         emenyHP = 100 * (4 + level) / 5;
         emenySpeed = 10 * 5 / (4 + level);
         startTime = Time.time;
+
         if (level == 3)
         {
-            gameSizeX++;
+            gameSizeY = 2;
+            gameSizeX = 6;
         }
         if (level == 5)
         {
-            gameSizeY++;
+            gameSizeY = 3;
+            gameSizeX = 6;
         }
         if (level == 7)
         {
-            gameSizeX++;
+            gameSizeY = 3;
+            gameSizeX = 8;
         }
 
     }
@@ -491,7 +496,7 @@ public class main : MonoBehaviour
             }
         }
         GameObject.Find("planes").transform.position -=
-            new Vector3(gameSizeX * 2.0f * 0.5f - 1.25f, 0, gameSizeY * 2.25f * 0.5f + 1.0f);
+            new Vector3(gameSizeX * 2.0f * 0.5f - 1.0f, 0, gameSizeY * 2.0f * 0.5f + 1.0f);
         //抓取指定物件
         cards = GameObject.FindGameObjectsWithTag("card"); //將所有tag是cards的物件都記到cards
     }
